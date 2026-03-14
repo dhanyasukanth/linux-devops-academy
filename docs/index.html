@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevOps Linux Lab — Ubuntu EC2 Learning Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══════════════════════════════ SIDEBAR ═══════════════════════════════ -->
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">DevOps Lab</span>
+        </div>
+        <div class="instance-badge" title="Simulated EC2 Instance">
+          <span class="status-dot"></span>
+          <span class="instance-text">i-0a1b2c3d4e5f — us-east-1</span>
+        </div>
+      </div>
+
+      <!-- Overall Progress -->
+      <div id="overall-progress-container">
+        <div class="progress-header">
+          <span class="progress-label">Linux Mastery</span>
+          <span id="overall-pct" class="progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div id="overall-bar" class="progress-fill"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="steps-done">0</span>&thinsp;/&thinsp;<span id="steps-total">0</span>&nbsp;steps completed
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div id="sidebar-search-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="sidebar-search" type="text" placeholder="Search modules…" autocomplete="off" />
+      </div>
+
+      <!-- Filter Pills -->
+      <div id="filter-pills">
+        <button class="pill active" data-filter="all">All</button>
+        <button class="pill" data-filter="beginner">Beginner</button>
+        <button class="pill" data-filter="intermediate">Interm.</button>
+        <button class="pill" data-filter="advanced">Advanced</button>
+      </div>
+
+      <!-- Module Navigation -->
+      <nav id="module-nav">
+        <!-- populated by app.js -->
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div id="sidebar-footer">
+        <button id="sandbox-toggle-btn" class="footer-btn" title="Free-play mode — type any Linux command">
+          <span id="sandbox-icon">🧪</span>
+          <span id="sandbox-label">Sandbox Mode</span>
+        </button>
+        <button id="reset-progress-btn" class="footer-btn danger" title="Reset all progress">
+          <span>🗑️</span> Reset
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+    <main id="main">
+
+      <!-- Top Bar -->
+      <header id="top-bar">
+        <div id="breadcrumb">
+          <span id="bc-module">Select a module</span>
+          <span class="bc-sep" id="bc-sep" hidden>›</span>
+          <span id="bc-exercise" hidden></span>
+        </div>
+        <div class="top-actions">
+          <span id="mode-badge" class="badge badge-exercise">📚 Exercise</span>
+          <button id="hint-btn"   class="action-btn hint-btn"   disabled>💡 Hint</button>
+          <button id="skip-btn"   class="action-btn skip-btn"   disabled>⏭ Skip Step</button>
+          <button id="cheat-btn"  class="action-btn cheat-btn">📋 Cheat Sheet</button>
+          <button id="help-btn"   class="action-btn help-btn">❓ Help</button>
+        </div>
+      </header>
+
+      <!-- Content: Lesson Panel + Terminal -->
+      <div id="content-area">
+
+        <!-- Lesson / Scenario Panel -->
+        <section id="lesson-panel">
+
+          <!-- Welcome Screen (shown before any module is selected) -->
+          <div id="welcome-screen">
+            <div class="welcome-hero">
+              <div class="welcome-logo">🐧</div>
+              <h1 class="welcome-title">DevOps Linux Lab</h1>
+              <p class="welcome-subtitle">Master Ubuntu Linux as it runs on AWS EC2.</p>
+              <p class="welcome-desc">
+                Hands-on, scenario-based learning covering every command a DevOps engineer
+                with 3 years of experience reaches for daily — from
+                <strong>filesystem navigation</strong> to <strong>live incident troubleshooting</strong>.
+              </p>
+              <div class="welcome-stats">
+                <div class="stat"><span id="stat-modules">12</span><label>Modules</label></div>
+                <div class="stat"><span id="stat-exercises">72</span><label>Exercises</label></div>
+                <div class="stat"><span id="stat-commands">300+</span><label>Commands</label></div>
+                <div class="stat"><span id="stat-hours">40+</span><label>Hours</label></div>
+              </div>
+              <p class="welcome-cta">← Pick a module in the sidebar to begin</p>
+            </div>
+
+            <div class="curriculum-overview">
+              <h2>What You'll Master</h2>
+              <div class="overview-grid" id="overview-grid">
+                <!-- populated by app.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Lesson Content -->
+          <div id="lesson-content" hidden>
+
+            <!-- Exercise Header -->
+            <div id="exercise-header">
+              <div class="ex-meta">
+                <span id="ex-difficulty-badge" class="diff-badge"></span>
+                <span id="ex-time-badge" class="time-badge">⏱ ~5 min</span>
+                <span id="ex-module-label" class="module-label"></span>
+              </div>
+              <h2 id="ex-title"></h2>
+            </div>
+
+            <!-- Scenario Context Box -->
+            <div id="scenario-box">
+              <div class="scenario-header">
+                <span class="scenario-icon">🔴</span>
+                <span class="scenario-label">Scenario</span>
+              </div>
+              <p id="scenario-text"></p>
+            </div>
+
+            <!-- Step Objectives -->
+            <div id="steps-panel">
+              <div class="steps-header">
+                <span>Steps</span>
+                <span id="step-counter" class="step-counter">0 / 0</span>
+              </div>
+              <ol id="steps-list">
+                <!-- populated dynamically -->
+              </ol>
+            </div>
+
+            <!-- Command Explanation (shown after each step) -->
+            <div id="explanation-box" hidden>
+              <div class="explanation-header">
+                <span>💡 Why This Works</span>
+                <button id="close-explanation" class="close-btn">✕</button>
+              </div>
+              <p id="explanation-text"></p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Terminal -->
+        <section id="terminal-section">
+          <div id="terminal-window">
+            <!-- macOS-style title bar -->
+            <div id="terminal-titlebar">
+              <div class="traffic-lights">
+                <span class="tl tl-red"></span>
+                <span class="tl tl-yellow"></span>
+                <span class="tl tl-green"></span>
+              </div>
+              <span id="terminal-title-text">ubuntu@ip-172-31-45-12: ~</span>
+              <div class="terminal-controls">
+                <button id="copy-last-cmd-btn" class="tbar-btn" title="Copy last command">⎘</button>
+                <button id="clear-terminal-btn" class="tbar-btn" title="Clear terminal (Ctrl+L)">⌫ Clear</button>
+              </div>
+            </div>
+
+            <!-- Output scrollback -->
+            <div id="terminal-output"></div>
+
+            <!-- Input row -->
+            <div id="terminal-input-area">
+              <span id="prompt-span" class="prompt-text">ubuntu@ip-172-31-45-12:~$&nbsp;</span>
+              <input id="terminal-input"
+                     type="text"
+                     autocomplete="off"
+                     autocorrect="off"
+                     autocapitalize="off"
+                     spellcheck="false"
+                     aria-label="Terminal input" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ── Footer Progress Bar ── -->
+      <footer id="footer">
+        <div id="footer-inner">
+          <div id="footer-steps">
+            <!-- Step dots populated dynamically -->
+          </div>
+          <div id="footer-info">
+            <span id="footer-module-name" class="footer-label"></span>
+            <span id="footer-exercise-name" class="footer-label dim"></span>
+          </div>
+          <div id="footer-progress-wrap">
+            <div class="footer-progress-label">
+              <span>Overall Progress</span>
+              <span id="footer-pct">0%</span>
+            </div>
+            <div class="footer-track">
+              <div id="footer-bar" class="footer-fill"></div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ═══════════════════ CHEAT SHEET MODAL ═══════════════════ -->
+  <div id="cheat-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Command Cheat Sheet">
+    <div class="modal-box wide">
+      <div class="modal-header">
+        <h2>📋 DevOps Command Cheat Sheet</h2>
+        <button class="modal-close" data-close="cheat-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="cheat-tabs" class="tab-bar">
+          <button class="tab active" data-tab="nav">Navigation</button>
+          <button class="tab" data-tab="users">Users</button>
+          <button class="tab" data-tab="proc">Processes</button>
+          <button class="tab" data-tab="net">Network</button>
+          <button class="tab" data-tab="logs">Logs</button>
+          <button class="tab" data-tab="pkg">Packages</button>
+          <button class="tab" data-tab="ec2">EC2</button>
+          <button class="tab" data-tab="dock">Docker</button>
+          <button class="tab" data-tab="sec">Security</button>
+          <button class="tab" data-tab="git">Git</button>
+        </div>
+        <div id="cheat-content" class="cheat-content">
+          <!-- populated by app.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ HELP MODAL ═══════════════════ -->
+  <div id="help-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>❓ Help & Keyboard Shortcuts</h2>
+        <button class="modal-close" data-close="help-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <h3>Terminal Shortcuts</h3>
+        <table class="shortcut-table">
+          <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Command history</td></tr>
+          <tr><td><kbd>Tab</kbd></td><td>Autocomplete command</td></tr>
+          <tr><td><kbd>Ctrl+C</kbd></td><td>Cancel current input</td></tr>
+          <tr><td><kbd>Ctrl+L</kbd></td><td>Clear terminal</td></tr>
+          <tr><td><kbd>Ctrl+A</kbd></td><td>Jump to start of line</td></tr>
+          <tr><td><kbd>Ctrl+E</kbd></td><td>Jump to end of line</td></tr>
+        </table>
+        <h3>Exercise Tips</h3>
+        <ul class="help-tips">
+          <li>Commands are flexible — <code>ls -la</code> and <code>ls -al</code> both work.</li>
+          <li>Use the <strong>Hint</strong> button if you're stuck for more than 2 minutes.</li>
+          <li>The <strong>Explanation</strong> box appears after each correct command — read it!</li>
+          <li>Switch to <strong>Sandbox Mode</strong> for free exploration without exercise checks.</li>
+          <li>Progress is saved automatically in your browser's local storage.</li>
+        </ul>
+        <h3>Learning Path</h3>
+        <p>Follow the modules in order for the best learning experience. Modules 1–4 are foundations; Modules 5–12 are operations. <strong>Module 8 (Troubleshooting)</strong> simulates real production incidents.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ HINT TOAST ═══════════════════ -->
+  <div id="hint-toast" class="hint-toast hidden">
+    <span class="hint-icon">💡</span>
+    <span id="hint-message"></span>
+    <button class="hint-close" id="hint-close-btn">✕</button>
+  </div>
+
+  <!-- ═══════════════════ SUCCESS TOAST ═══════════════════ -->
+  <div id="success-toast" class="success-toast hidden">
+    <span class="success-icon">✅</span>
+    <span id="success-message">Step complete!</span>
+  </div>
+
+  <script src="js/curriculum-1.js"></script>
+  <script src="js/curriculum-2.js"></script>
+  <script src="js/curriculum-3.js"></script>
+  <script src="js/curriculum-4.js"></script>
+  <script src="js/terminal-sim.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
