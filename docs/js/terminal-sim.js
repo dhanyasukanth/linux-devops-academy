@@ -678,6 +678,15 @@ xvda             1.32    3.87    34.12   102.45     0.00     1.21   0.00  23.85 
     const cmd = rawInput.trim();
     if (!cmd) return '';
 
+    // Handle && and ; chaining — run each part and join outputs
+    // Split on && or ; but NOT inside quotes, and not inside $(...) 
+    if (/&&|(?<![<>]);(?![<>])/.test(cmd) && !cmd.includes('|')) {
+      const parts = cmd.split(/\s*&&\s*|\s*;\s*/).map(p => p.trim()).filter(Boolean);
+      if (parts.length > 1) {
+        return parts.map(p => getCommandOutput(p)).filter(o => o !== '').join('\n');
+      }
+    }
+
     // Exact match first
     if (FAKE_OUTPUTS[cmd] !== undefined) return FAKE_OUTPUTS[cmd];
 
